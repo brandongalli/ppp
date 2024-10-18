@@ -1,0 +1,2 @@
+# Ignore Composer's vendor directory (use the one built inside the container)
+vendor/
