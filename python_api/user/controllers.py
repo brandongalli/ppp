@@ -73,7 +73,8 @@ def get_all_users(limit: int = 10, offset: int = 0) -> list[dict]:
 
 
 def get_users_by_email(email: str) -> list[dict]:
-    users = database.query_get(
+    
+    users = database.read(
         """
         SELECT
             user.id,
@@ -85,6 +86,7 @@ def get_users_by_email(email: str) -> list[dict]:
         """,
         (email),
     )
+    print(type(users), "This is users ----------------")
     return users
 
 

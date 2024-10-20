@@ -10,12 +10,12 @@ auth_handler = AuthProvider()
 def register_user(user_model: SignUpRequestModel):
     database = DatabaseConnector()
     user = get_users_by_email(user_model.email)
-    if len(user) != 0:
+    if user is not None:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT, detail="Email already exists."
         )
     hashed_password = auth_handler.get_password_hash(user_model.password)
-    database.query_put(
+    database.create(
         """
                 INSERT INTO user (
                     first_name,
