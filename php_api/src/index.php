@@ -2,54 +2,28 @@
 require __DIR__ . '/../vendor/autoload.php';
 
 use Slim\Factory\AppFactory;
-use Firebase\JWT\JWT;
-use Firebase\JWT\Key;
-use Psr\Http\Message\ResponseInterface as Response;
-use Psr\Http\Message\ServerRequestInterface as Request;
 
+// Create the Slim app
 $app = AppFactory::create();
 
-// JWT Secret Key
-$secretKey = "your_secret_key";
+// Load environment variables from Docker
 
-// Middleware to validate JWT
-$authMiddleware = function (Request $request, $handler) use ($secretKey) {
-    $authHeader = $request->getHeader('Authorization');
-    if ($authHeader && preg_match('/Bearer\s(\S+)/', $authHeader[0], $matches)) {
-        try {
-            // Decode JWT and validate signature
-            $decoded = JWT::decode($matches[1], new Key($secretKey, 'HS256'));
+$dbHost = getenv('DATABASE_HOST');
+$dbName = getenv('DATABASE');
+$dbUser = getenv('DATABASE_USERNAME');
+$dbPassword = getenv('DATABASE_PASSWORD');
 
-            // Continue request if valid
-            return $handler->handle($request);
-        } catch (Exception $e) {
-            $response = new \Slim\Psr7\Response();
-            $response->getBody()->write('Invalid Token: ' . $e->getMessage());
-            return $response->withStatus(401);
-        }
-    }
+// Set up MySQL PDO connection
+$dsn = "mysql:host=$dbHost;dbname=$dbName";
+$options = [
+    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+];
+$pdo = new PDO($dsn, $dbUser, $dbPassword, $options);
 
-    $response = new \Slim\Psr7\Response();
-    $response->getBody()->write('Unauthorized');
-    return $response->withStatus(401);
-};
+// Include routes
+(require __DIR__ . '/routes/auth.php')($app);
+(require __DIR__ . '/routes/api.php')($app, $pdo);
 
-// Route to generate JWT token (public)
-$app->post('/token', function (Request $request, Response $response) use ($secretKey) {
-    $payload = [
-        'user' => 'testuser',
-        'exp' => time() + 3600 // 1 hour expiration
-    ];
-
-    $jwt = JWT::encode($payload, $secretKey, 'HS256');
-    $response->getBody()->write(json_encode(['token' => $jwt]));
-    return $response->withHeader('Content-Type', 'application/json');
-});
-
-// Protected route (requires valid JWT)
-$app->get('/protected', function (Request $request, Response $response) {
-    $response->getBody()->write('You are authorized!');
-    return $response;
-})->add($authMiddleware);
-
+// Run the Slim app
 $app->run();

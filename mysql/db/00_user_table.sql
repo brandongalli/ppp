@@ -1,9 +1,9 @@
-CREATE TABLE `user` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `email` varchar(256) NOT NULL,
-  `first_name` varchar(256) NOT NULL,
-  `last_name` varchar(256) NOT NULL,
-  `password_hash` char(60) NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `email` (`email`)
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL
 );
+
+INSERT INTO users (name, email) VALUES 
+('Alice', 'alice@example.com'),
+('Bob', 'bob@example.com');

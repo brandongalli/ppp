@@ -20,7 +20,7 @@ def update_user(user_model: UserUpdateRequestModel) -> int:
     if user_model.password is not None and len(user_model.password) > 0:
         hashed_password = auth_handler.get_password_hash(user_model.password)
         # Update the user
-        return database.query_put(
+        return database.query_put.delay(
             """
                 UPDATE user
                     SET first_name = %s,
@@ -39,7 +39,7 @@ def update_user(user_model: UserUpdateRequestModel) -> int:
         )
     else:
         # Update the user
-        return database.query_put(
+        return database.query_put.delay(
             """
                 UPDATE user
                     SET first_name = %s,
@@ -73,8 +73,7 @@ def get_all_users(limit: int = 10, offset: int = 0) -> list[dict]:
 
 
 def get_users_by_email(email: str) -> list[dict]:
-    
-    users = database.read(
+    users = database.query_get.delay(
         """
         SELECT
             user.id,
@@ -86,12 +85,11 @@ def get_users_by_email(email: str) -> list[dict]:
         """,
         (email),
     )
-    print(type(users), "This is users ----------------")
     return users
 
 
 def get_user_by_id(id: int) -> dict:
-    users = database.query_get(
+    users = database.query_get.delay(
         """
         SELECT
             user.id,

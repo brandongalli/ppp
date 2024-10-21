@@ -6,3 +6,5 @@ passlib[bcrypt]
 pymysql==1.1.0
 cryptography==41.0.7
 pydantic[email]==2.5.2
+celery==5.3.4
+redis==5.1.1

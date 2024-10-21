@@ -12,6 +12,9 @@ WORKDIR /var/www/slim_app
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
+# Install MySQL extension
+RUN docker-php-ext-install pdo_mysql
+
 # Copy the current directory contents into the container
 COPY . .
 
