@@ -1,16 +1,15 @@
 from sqlmodel import SQLModel, Field
 from typing import Optional
 
-
-class SongBase(SQLModel):
-    name: str
-    artist: str
-    year: Optional[int] = None
-
-
-class Song(SongBase, table=True):
-    id: int = Field(default=None, nullable=False, primary_key=True)
-
-
-class SongCreate(SongBase):
-    pass
+class Player(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, nullable=False, primary_key=True)
+    first_name: str = Field(default=None, nullable=False)
+    last_name: str = Field(default=None, nullable=False)
+    team: str = Field(default=None, nullable=False)
+    position: str = Field(default=None, nullable=False)
+    height: str = Field(default=None, nullable=False)
+    weight: str = Field(default=None, nullable=False)
+    birth_year: int = Field(default=None, nullable=False)
+    debut_year: int = Field(default=None, nullable=False)
+    college: str = Field(default=None, nullable=False)
+    bio: str = Field(default=None, nullable=False)

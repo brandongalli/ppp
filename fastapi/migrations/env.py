@@ -1,3 +1,4 @@
+import os
 from logging.config import fileConfig
 
 from sqlalchemy import engine_from_config
@@ -20,11 +21,18 @@ if config.config_file_name is not None:
 # target_metadata = mymodel.Base.metadata
 target_metadata = None
 
+DATABASE_HOST= os.getenv("DATABASE_HOST")
+DATABASE_USERNAME= os.getenv("DATABASE_USERNAME")
+DATABASE_PASSWORD= os.getenv("DATABASE_PASSWORD")
+DATABASE= os.getenv("DATABASE")
+DATABASE_PORT= int(os.getenv("DATABASE_PORT"))
+
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
 # my_important_option = config.get_main_option("my_important_option")
 # ... etc.
 
+config.set_main_option('sqlalchemy.url', f"mysql+mysqlconnector://{DATABASE_USERNAME}:{DATABASE_PASSWORD}@mysql_db:{DATABASE_PORT}/{DATABASE}")
 
 def run_migrations_offline() -> None:
     """Run migrations in 'offline' mode.

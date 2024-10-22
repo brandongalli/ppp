@@ -3,6 +3,7 @@ import os
 from sqlmodel import SQLModel, create_engine
 from sqlalchemy.ext.asyncio import create_async_engine
 from sqlmodel.ext.asyncio.session import AsyncSession
+from sqlalchemy.orm import sessionmaker, Session
 
 from sqlalchemy.orm import sessionmaker
 
@@ -12,21 +13,21 @@ DATABASE_USERNAME= os.getenv("DATABASE_USERNAME")
 DATABASE_PASSWORD= os.getenv("DATABASE_PASSWORD")
 DATABASE= os.getenv("DATABASE")
 DATABASE_PORT= int(os.getenv("DATABASE_PORT"))
-engine = create_async_engine(
+engine = create_engine(
     f"mysql+mysqlconnector://{DATABASE_USERNAME}:{DATABASE_PASSWORD}@mysql_db:{DATABASE_PORT}/{DATABASE}",
     echo=True,
     future=True
 )
 
-async def init_db():
-    async with engine.begin() as conn:
-        # await conn.run_sync(SQLModel.metadata.drop_all)
-        await conn.run_sync(SQLModel.metadata.create_all)
+# Synchronous version of init_db
+def init_db():
+    with engine.begin() as conn:
+        # conn.run_sync(SQLModel.metadata.drop_all)
+        SQLModel.metadata.create_all(conn)
 
-
-async def get_session() -> AsyncSession: # type: ignore
-    async_session = sessionmaker(
-        engine, class_=AsyncSession, expire_on_commit=False
+def get_session() -> Session: # type: ignore
+    sync_session = sessionmaker(
+        engine, class_=Session, expire_on_commit=False
     )
-    async with async_session() as session:
+    with sync_session() as session:
         yield session

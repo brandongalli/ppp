@@ -8,7 +8,7 @@ celery_app = Celery(
 
 celery_app.conf.update(
     task_routes={
-        "database.connector.DatabaseConnector.query_get.delay": {"queue": "db_read_queue"},
+        "database.connector.DatabaseConnector.query_get": {"queue": "db_read_queue"},
         "database.connector.DatabaseConnector.query_put": {"queue": "db_write_queue"}
     }
 )
