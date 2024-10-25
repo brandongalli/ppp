@@ -1,8 +1,9 @@
-from typing import Optional
+from typing import Optional, List
 from datetime import datetime
 from fastapi import Depends, APIRouter, Query
 from sqlalchemy.orm import joinedload
 from sqlmodel import Session, select
+
 from auth.provider import authorization
 from db_config import engine
 from game.models import Game, Stadium
@@ -10,15 +11,26 @@ from game.schemas import GameResponse
 
 router = APIRouter()
 
-@router.get('/games', response_model=list[GameResponse])
+@router.get('/games', response_model=List[GameResponse])
 async def get_games(
     start_date: Optional[datetime] = Query(None, description="Start date in yyyy-mm-dd format"),
     end_date: Optional[datetime] = Query(None, description="End date in yyyy-mm-dd format"),
     home_team_id: Optional[int] = Query(None, description="Home team ID"),
     _: bool = Depends(authorization)
 ):
+    """
+    Retrieve a list of games filtered by date and home team ID.
+
+    Parameters:
+    - start_date: Filter for games occurring on or after this date.
+    - end_date: Filter for games occurring on or before this date.
+    - home_team_id: Filter for games with the specified home team.
+
+    Returns:
+    - List of games with detailed information, formatted as GameResponse.
+    """
     with Session(engine) as session:
-        # Start building the base query
+        # Start building the base query with relationships for stadium and teams
         query = select(Game).options(
             joinedload(Game.stadium),
             joinedload(Game.home_team),
@@ -36,7 +48,7 @@ async def get_games(
         # Execute the filtered query
         games = session.exec(query).all()
         
-        # Format the response
+        # Format the response for each game
         response = []
         for game in games:
             # Determine if the home team won or lost
@@ -57,23 +69,47 @@ async def get_games(
         
         return response
 
-    
-@router.post('/games')
-async def create_team(game: Game, _: bool = Depends(authorization)):
+@router.post('/games', response_model=Game)
+async def create_game(game: Game, _: bool = Depends(authorization)):
+    """
+    Create a new game record.
+
+    Parameters:
+    - game: Game object with all necessary details.
+
+    Returns:
+    - The created game record.
+    """
     with Session(engine) as session:
         session.add(game)
         session.commit()
         session.refresh(game)
         return game
 
-@router.get('/stadiums', response_model=list[Stadium])
+@router.get('/stadiums', response_model=List[Stadium])
 async def get_stadiums(_: bool = Depends(authorization)):
+    """
+    Retrieve a list of all stadiums.
+
+    Returns:
+    - List of all stadiums in the database.
+    """
     with Session(engine) as session:
-        stadiums = session.exec(select(Game)).all()
+        # Query all stadiums from the database
+        stadiums = session.exec(select(Stadium)).all()
         return stadiums
-    
-@router.post('/stadiums')
+
+@router.post('/stadiums', response_model=Stadium)
 async def create_stadium(stadium: Stadium, _: bool = Depends(authorization)):
+    """
+    Create a new stadium record.
+
+    Parameters:
+    - stadium: Stadium object with all necessary details.
+
+    Returns:
+    - The created stadium record.
+    """
     with Session(engine) as session:
         session.add(stadium)
         session.commit()

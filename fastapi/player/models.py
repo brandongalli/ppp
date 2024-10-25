@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Optional, List
+from typing import Optional
 from sqlmodel import SQLModel, Field, inspect, Relationship
 
 class PositionChoices(str, Enum):
@@ -61,6 +61,7 @@ class Team(SQLModel, table=True):
 class Player(PlayerBase, table=True):
     id: Optional[int] = Field(default=None, nullable=False, primary_key=True)
     team_id: int = Field(foreign_key='team.id')
+
 
     def __init__(self, **kw):
         mapper = inspect(self).mapper

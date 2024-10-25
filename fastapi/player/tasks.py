@@ -29,9 +29,3 @@ def get_players_task():
     with Session(engine) as session:
         players = session.exec(select(Player)).all()
         return players.dict()
-    
-@celery_app.task(serializer='json')
-def example_task(x, y):
-    logger.info('Adding {0} + {1}'.format(x, y))
-
-    return x + y

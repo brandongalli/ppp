@@ -11,16 +11,22 @@ from game.views import router as game_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-
+    """
+    Context manager for application lifespan.
+    
+    Initializes the database at startup and disposes of the database engine on shutdown.
+    """
+    # Initialize the database at application startup
     init_db()
     print("Database Initialized")
 
     yield
     
-    # Shutdown logic
+    # Perform shutdown operations
     print("Shutting down application...")
     engine.dispose()  # Close all database connections
 
+# Define the FastAPI application with lifespan context and custom documentation URLs
 app = FastAPI(
     lifespan=lifespan,
     docs_url="/v1/docs",
@@ -28,19 +34,12 @@ app = FastAPI(
     openapi_url="/v1/openapi.json",
 )
 
-# Set API info
-app = FastAPI(
-    docs_url="/v1/docs",
-    redoc_url="/v1/redoc",
-    openapi_url="/v1/openapi.json",
-)
-
-# Set CORS
+# Set allowed CORS origins
 origins = [
     "http://localhost:3000",
 ]
 
-# Set middleware
+# Add CORS middleware configuration
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -51,12 +50,27 @@ app.add_middleware(
 
 @app.get("/healthcheck")
 async def healthcheck():
+    """
+    Health check endpoint to verify the service status.
+    
+    Returns:
+    - {"status": "OK!"}: JSON response confirming service is active.
+    """
     return {"status": "OK!"}
 
 @app.post('/populate-db')
 async def populate_data(_: bool = Depends(authorization)):
+    """
+    Populate the database with mock data for testing or development.
+    
+    Authorization is required to access this endpoint.
+    
+    Returns:
+    - Result of the populate_database function.
+    """
     return populate_database()
 
+# Include routers for different modules
 app.include_router(auth_router)
 app.include_router(player_router)
 app.include_router(game_router)
