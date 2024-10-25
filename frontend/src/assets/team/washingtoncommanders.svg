@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="60" height="32.703" viewBox="0 0 60 32.703">
+  <defs>
+    <clipPath id="clip-path">
+      <rect id="Rectangle_43" data-name="Rectangle 43" width="60" height="32.703" transform="translate(2.609 16.174)" fill="#fff"/>
+    </clipPath>
+  </defs>
+  <g id="logo_washingtoncommanders" transform="translate(-2.609 -16.174)" clip-path="url(#clip-path)">
+    <path id="Path_80" data-name="Path 80" d="M43.579,16.174l1.918,5.88-1.427,4.37-3.331-10.25H25.806L23.128,24.39,20.46,16.174H2.609L8.217,25.28l7.682,23.6H30.354l2.905-8.92,2.9,8.92H51.97l10.638-32.7ZM10.213,24.355l-3.7-6H18.874l3.1,9.562-5.3,16.289ZM28.76,46.743H18.148L26.815,20.12l5.3,16.308Zm-.224-28.387H39.152l3.776,11.6L37.615,46.282ZM50.365,46.73H39.757l8.027-24.662-1.208-3.712H59.6Z" fill="#ffb612"/>
+    <path id="Path_81" data-name="Path 81" d="M42.921,29.957,37.607,46.285,28.536,18.356H39.152Zm3.655-11.6,1.2,3.712L39.751,46.73H50.36L59.6,18.356Zm-27.7,0H6.517l3.7,6,6.474,19.853,5.292-16.289ZM18.148,46.73H28.773l3.353-10.3L26.815,20.12Z" fill="#5a1414"/>
+  </g>
+</svg>

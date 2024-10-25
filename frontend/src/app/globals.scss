@@ -1,0 +1,84 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0.5) 100%
+  );
+  --foreground: white;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: red;
+  color: var(--foreground);
+  font-family: Open Sans;
+}
+
+.page {
+  background: var(--background);
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.game-tr {
+  td {
+    padding: 0;
+  }
+
+  .td-item {
+    font-size: 14px;
+    padding: 0.5rem 1rem;
+  }
+
+  &:hover {
+    outline: 2px solid #aa0000;
+    outline-offset: -2px;
+
+    .td-item {
+      background-color: #aa00001a;
+    }
+  }
+}
+
+.tooltip {
+  position: absolute;
+  top: 4rem;
+  right: 4rem;
+  background-color: #fff;
+  color: #333;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+  max-width: 350px;
+}
+
+.game-tr:hover .tooltip {
+  visibility: visible;
+  opacity: 1;
+}
+
+.tooltip-content {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}

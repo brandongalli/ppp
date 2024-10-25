@@ -12,6 +12,9 @@ const config: Config = {
         background: "var(--background)",
         foreground: "var(--foreground)",
       },
+      clipPath: {
+        triangle: "polygon(0% 0%, 100% 0%, 50% 100%)",
+      },
     },
   },
   plugins: [],
