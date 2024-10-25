@@ -97,6 +97,9 @@ The project is structured to maintain separation between frontend, backend, and 
 - **Database**: MySQL (Dockerized)
 - **Queueing**: Redis (Dockerized)
 
+### Postman
+Added postman_collection.json for test reference.
+
 ### Improvements for Production
 - Enhanced validations and exception handling.
 - Database indexing and constraints for unique identifiers (e.g., `Player number + Team`).

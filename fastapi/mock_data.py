@@ -1,5 +1,4 @@
 import random
-from datetime import datetime, timedelta
 from faker import Faker
 from sqlmodel import Session, select
 
@@ -81,7 +80,7 @@ def create_players(session: Session, teams, num_players_per_team: int = 20):
             session.add(player)
         session.commit()  # Commit after each team’s players are added
 
-def create_games(session: Session, teams, stadiums, num_games_per_team: int = 10):
+def create_games(session: Session, teams, stadiums, num_games_per_team: int = 20):
     """
     Creates a specified number of games for each team with random dates, scores, opponents, and stadiums.
 
@@ -89,7 +88,7 @@ def create_games(session: Session, teams, stadiums, num_games_per_team: int = 10
     - session: The active SQLModel session.
     - teams: A list of Team objects to schedule games for.
     - stadiums: A list of Stadium objects to host games.
-    - num_games_per_team: The number of games per team (default is 10).
+    - num_games_per_team: The number of games per team (default is 20).
     """
     for team in teams:
         for _ in range(num_games_per_team):
@@ -120,9 +119,15 @@ def populate_database():
     This function initializes the database by creating teams, stadiums, players, and games.
     It uses Faker to generate random values for names, locations, scores, etc.
     """
-    with Session(engine) as session:
-        # Generate and populate teams, stadiums, players, and games
-        teams = create_teams(session)
-        stadiums = create_stadiums(session)
-        create_players(session, teams)
-        create_games(session, teams, stadiums)
+    try:
+        with Session(engine) as session:
+            # Generate and populate teams, stadiums, players, and games
+            teams = create_teams(session)
+            stadiums = create_stadiums(session)
+            create_players(session, teams)
+            create_games(session, teams, stadiums)
+
+        return True
+    except Exception as e:
+        print(e)
+        return False
