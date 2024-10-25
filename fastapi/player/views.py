@@ -1,4 +1,5 @@
-from fastapi import Depends, APIRouter, HTTPException
+from typing import Optional, List
+from fastapi import Depends, APIRouter, Query
 from celery.result import AsyncResult
 from sqlmodel import Session, select
 from auth.provider import authorization
@@ -23,10 +24,20 @@ async def create_team(team: TeamCreate, _: bool = Depends(authorization)):
 
     return task
 
-@router.get('/players', response_model=list[Player])
-async def get_players(_: bool = Depends(authorization)):
+@router.get('/players', response_model=List[Player])
+async def get_players(
+    _: bool = Depends(authorization),
+    teams: Optional[str] = Query(None)
+):
     with Session(engine) as session:
-        players = session.exec(select(Player)).all()
+        query = select(Player)
+        
+        # Parse teams if provided
+        if teams:
+            team_ids = [int(team_id) for team_id in teams.split(',')]
+            query = query.where(Player.team_id.in_(team_ids))
+        
+        players = session.exec(query).all()
         return players
     
 @router.post('/players')

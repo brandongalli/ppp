@@ -1,5 +1,6 @@
+from typing import Optional
 from datetime import datetime
-from fastapi import Depends, APIRouter
+from fastapi import Depends, APIRouter, Query
 from sqlalchemy.orm import joinedload
 from sqlmodel import Session, select
 from auth.provider import authorization
@@ -11,20 +12,29 @@ router = APIRouter()
 
 @router.get('/games', response_model=list[GameResponse])
 async def get_games(
-    start_date: datetime, 
-    end_date: datetime, 
+    start_date: Optional[datetime] = Query(None, description="Start date in yyyy-mm-dd format"),
+    end_date: Optional[datetime] = Query(None, description="End date in yyyy-mm-dd format"),
+    home_team_id: Optional[int] = Query(None, description="Home team ID"),
     _: bool = Depends(authorization)
 ):
     with Session(engine) as session:
-        # Query to filter games within the date range and include relationships
-        games = (
-            session.exec(
-                select(Game)
-                .where(Game.date >= start_date, Game.date <= end_date)
-                .options(joinedload(Game.stadium), joinedload(Game.home_team), joinedload(Game.away_team))
-            )
-            .all()
+        # Start building the base query
+        query = select(Game).options(
+            joinedload(Game.stadium),
+            joinedload(Game.home_team),
+            joinedload(Game.away_team)
         )
+        
+        # Apply filters if parameters are provided
+        if start_date:
+            query = query.where(Game.date >= start_date)
+        if end_date:
+            query = query.where(Game.date <= end_date)
+        if home_team_id:
+            query = query.where(Game.home_team_id == home_team_id)
+
+        # Execute the filtered query
+        games = session.exec(query).all()
         
         # Format the response
         response = []
@@ -34,16 +44,19 @@ async def get_games(
             ht = f"{game.home_team_score}-{game.away_team_score}"
             
             response.append(GameResponse(
-                date=game.date.strftime("%B %d, %Y"),
+                date=game.date.strftime("%Y-%m-%d"),  # Format date as 'yyyy-mm-dd'
                 stadium=game.stadium.name,
                 logo_uri=game.away_team.logo_uri,
                 location=game.stadium.location,
                 opponent=game.away_team.name,
                 score=score,
-                ht=ht
+                ht=ht,
+                home_team_id=game.home_team_id,
+                away_team_id=game.away_team_id
             ))
         
         return response
+
     
 @router.post('/games')
 async def create_team(game: Game, _: bool = Depends(authorization)):

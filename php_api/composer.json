@@ -3,6 +3,7 @@
         "slim/slim": "^4.0",
         "slim/psr7": "^1.4",
         "firebase/php-jwt": "^6.0",
-        "ext-pdo_mysql": "*"
+        "ext-pdo_mysql": "*",
+        "guzzlehttp/guzzle": "^7.0"
     }
 }

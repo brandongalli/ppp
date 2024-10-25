@@ -8,3 +8,5 @@ class GameResponse(BaseModel):
     opponent: str
     score: str
     ht: str
+    home_team_id: int
+    away_team_id: int
