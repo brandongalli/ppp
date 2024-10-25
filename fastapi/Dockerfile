@@ -3,9 +3,10 @@ FROM python:3.12-slim
 
 # Install dependencies
 RUN apt-get update && apt-get install -y \
-    python3-dev \
+    python3-dev iputils-ping \
     default-libmysqlclient-dev \
     build-essential \
+    netcat-openbsd \
     && rm -rf /var/lib/apt/lists/*
 
 # set working directory
@@ -18,6 +19,7 @@ RUN pip install -r  requirements.txt
 
 # add app
 COPY . .
+# Set executable permission for the wait-for.sh script
+
 
 EXPOSE 8080
-CMD ["uvicorn", "main:app", "--reload", "--host", "0.0.0.0", "--port", "8080"]
